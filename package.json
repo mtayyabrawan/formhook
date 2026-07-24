@@ -1,0 +1,59 @@
+{
+    "name": "@mtayyabrawan/formhook",
+    "version": "0.0.1",
+    "description": "React form hook with zod validation",
+    "type": "module",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "prettier": "prettier --write ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mtayyabrawan/formhook.git"
+    },
+    "keywords": [
+        "react",
+        "forms",
+        "hook",
+        "zod"
+    ],
+    "author": {
+        "name": "Muhammad Tayyab",
+        "email": "tayyabraza1918@gmail.com",
+        "url": "https://mtayyabrawan.github.io"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/mtayyabrawan/formhook/issues"
+    },
+    "homepage": "https://github.com/mtayyabrawan/formhook#readme",
+    "dependencies": {
+        "zod": "^3.25.0 || ^4"
+    },
+    "peerDependencies": {
+        "react": "^18 || ^19",
+        "zod": "^3.25.0 || ^4"
+    },
+    "devDependencies": {
+        "@types/react": "^19",
+        "prettier": "^3.8.3",
+        "react": "^19",
+        "tsup": "^8.5.1",
+        "typescript": "^5",
+        "zod": "^4"
+    }
+}
