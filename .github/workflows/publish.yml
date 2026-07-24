@@ -1,0 +1,78 @@
+name: Publish
+
+on:
+    push:
+        branches: [main]
+        paths-ignore:
+            - "package.json"
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+                  cache: "pnpm"
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Build
+              run: pnpm run build
+
+            - name: Bump version and create tag
+              id: bump_version
+              run: |
+                  git config --global user.name "GitHub Actions"
+                  git config --global user.email "actions@github.com"
+
+                  # Automatically bumps the patch version (e.g., 1.0.0 -> 1.0.1)
+                  # Change 'patch' to 'minor' or 'major' depending on your needs
+                  pnpm version patch --no-git-tag-version
+
+                  # Read the newly bumped version
+                  NEW_VERSION=$(node -p "require('./package.json').version")
+                  echo "New version: $NEW_VERSION"
+
+                  # Commit and tag
+                  git add package.json
+                  git commit -m "chore(release): bump version to $NEW_VERSION [skip ci]"
+                  git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
+
+                  # Push changes securely
+                  git push origin HEAD:main --tags
+
+                  # Export for next steps
+                  echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+            - name: Publish to npm
+              run: |
+                  # Create npm registry auth configuration dynamically
+                  echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
+                  pnpm publish --no-git-checks
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.PNPM_TOKEN }}
+
+            - name: Create GitHub Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: "v${{ steps.bump_version.outputs.version }}"
+                  name: "Release v${{ steps.bump_version.outputs.version }}"
+                  body: |
+                      Automated release of **v${{ steps.bump_version.outputs.version }}** built from commit `${{ github.sha }}`.
+                  draft: false
+                  prerelease: false
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
