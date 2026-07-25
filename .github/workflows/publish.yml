@@ -1,10 +1,17 @@
 name: Publish
 
 on:
-    push:
-        branches: [main]
-        paths-ignore:
-            - "package.json"
+    workflow_dispatch:
+        inputs:
+            release:
+                description: "Version bump"
+                required: true
+                default: patch
+                type: choice
+                options:
+                    - patch
+                    - minor
+                    - major
 
 jobs:
     publish:

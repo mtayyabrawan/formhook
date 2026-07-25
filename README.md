@@ -1,5 +1,7 @@
 # @mtayyabrawan/formhook
 
+![npm](https://img.shields.io/npm/v/@mtayyabrawan/formhook) ![npm](https://img.shields.io/npm/dw/@mtayyabrawan/formhook) ![npm](https://img.shields.io/npm/dt/@mtayyabrawan/formhook) ![npm](https://img.shields.io/npm/dm/@mtayyabrawan/formhook) ![npm](https://img.shields.io/npm/l/@mtayyabrawan/formhook) ![GitHub Repo stars](https://img.shields.io/github/stars/mtayyabrawan/formhook) ![GitHub Forks](https://img.shields.io/github/forks/mtayyabrawan/formhook) ![GitHub last commit](https://img.shields.io/github/last-commit/mtayyabrawan/formhook) ![GitHub issues](https://img.shields.io/github/issues/mtayyabrawan/formhook) ![Code Coverage](https://img.shields.io/codecov/c/github/mtayyabrawan/formhook) ![GitHub language count](https://img.shields.io/github/languages/top/mtayyabrawan/formhook)
+
 A lightweight React hook for managing forms with built-in Zod validation. Simplify form state, validation, and submission handling in React and Next.js applications.
 
 ## Features
@@ -16,6 +18,8 @@ A lightweight React hook for managing forms with built-in Zod validation. Simpli
 npm install @mtayyabrawan/formhook
 # or
 yarn add @mtayyabrawan/formhook
+# or
+pnpm add @mtayyabrawan/formhook
 ```
 
 ## Peer Dependencies
@@ -28,7 +32,7 @@ Make sure these are installed in your project.
 ## Basic Usage
 
 ```tsx
-import { useForm } from "@mtayyabrawan/formhook";
+import useForm from "@mtayyabrawan/formhook";
 import { z } from "zod";
 
 const schema = z.object({
@@ -103,7 +107,7 @@ The hook works seamlessly with Next.js 13+ App Router. Since it's a client-side 
 ```tsx
 "use client";
 
-import { useForm } from "@mtayyabrawan/formhook";
+import useForm from "@mtayyabrawan/formhook";
 import { z } from "zod";
 
 const schema = z.object({
