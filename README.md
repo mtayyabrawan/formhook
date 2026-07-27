@@ -9,7 +9,7 @@ A lightweight React hook for managing forms with built-in Zod validation. Simpli
 - **React Hook API**: `useForm<T>()` provides a simple interface for form state management.
 - **Zod Validation**: Integrates seamlessly with Zod schemas for type-safe validation.
 - **Type Safety**: Full TypeScript support with inferred types for form values and errors.
-- **Flexible API**: Supports field-level access via `formField`, error handling via `formErrors`, and easy reset functionality.
+- **Flexible API**: Supports field level access via `formField`, error handling via `formErrors`, and easy reset functionality.
 - **Next.js Ready**: Works out of the box with Server Components and App Router.
 
 ## Installation
@@ -94,15 +94,15 @@ export default function UserForm() {
 
 ### Key API Elements
 
-- **`useForm<T>(props: UseFormProps<T>)`**: Returns an object with form state and methods.
+- **`useForm<T, TError extends string = string>(props: UseFormProps<T>)`**: Returns an object with form errors and methods.
 - **`formField<K extends keyof T>(fieldName: K)`**: Accessor for a specific field, returns `value`, `name`, and `onChange`.
-- **`formErrors: FormErrors<T>`**: Object containing validation errors keyed by field name.
+- **`formErrors: FormErrors<T, TError>`**: Object containing validation errors keyed by field name and valued by custom error type provided by user extended by string.
 - **`reset()`**: Resets form to initial data and clears errors.
 - **`handleSubmit(callback: (data: T) => void)`**: Wraps submit handler to trigger validation and provide `event.preventDefault()`.
 
 ### Using with Next.js App Router
 
-The hook works seamlessly with Next.js 13+ App Router. Since it's a client-side hook, wrap your form component in a `"use client"` directive:
+The hook works seamlessly with Next.js 13+ App Router. Since it's a client side hook, wrap your form component in a `"use client"` directive:
 
 ```tsx
 "use client";
