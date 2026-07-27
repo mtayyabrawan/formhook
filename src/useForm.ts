@@ -1,16 +1,20 @@
 import { ChangeEvent, SubmitEvent, useState } from "react";
-import { FormErrors, FormFieldProps, UseFormProps } from "./types.js";
+import {
+    FormElements,
+    FormErrors,
+    FormFieldReturn,
+    HandleSubmitReturn,
+    SubmitCallBack,
+    UseFormProps,
+    UseFormReturn,
+} from "./types.js";
 
-function useForm<T>({ initialData, validationSchema }: UseFormProps<T>): {
-    reset: () => void;
-    formField: <K extends keyof T>(fieldName: K) => FormFieldProps<T, K>;
-    formErrors: FormErrors<T>;
-    handleSubmit: (
-        submitCallback: (data: T) => void
-    ) => (e: SubmitEvent) => void;
-} {
+function useForm<T, TError extends string = string>({
+    initialData,
+    validationSchema,
+}: UseFormProps<T>): UseFormReturn<T, TError> {
     const [formData, setFormData] = useState<T>(initialData);
-    const [formErrors, setFormErrors] = useState<FormErrors<T>>({});
+    const [formErrors, setFormErrors] = useState<FormErrors<T, TError>>({});
     const [touched, setTouched] = useState<boolean>(false);
 
     function reset() {
@@ -19,7 +23,7 @@ function useForm<T>({ initialData, validationSchema }: UseFormProps<T>): {
         setFormErrors({});
     }
 
-    function formField<K extends keyof T>(fieldName: K): FormFieldProps<T, K> {
+    function formField<K extends keyof T>(fieldName: K): FormFieldReturn<T, K> {
         return {
             value: formData[fieldName],
             name: fieldName,
@@ -31,10 +35,10 @@ function useForm<T>({ initialData, validationSchema }: UseFormProps<T>): {
         const parsed = validationSchema.safeParse(data);
         if (!parsed.success) {
             const fieldErrors = parsed.error.flatten().fieldErrors;
-            const mappedErrors: FormErrors<T> = {};
+            const mappedErrors: FormErrors<T, TError> = {};
             (Object.keys(fieldErrors) as (keyof T)[]).forEach((key) => {
                 const message = fieldErrors[key]?.[0];
-                if (message) mappedErrors[key] = message;
+                if (message) mappedErrors[key] = message as TError;
             });
             setFormErrors({ ...mappedErrors });
             return false;
@@ -43,9 +47,8 @@ function useForm<T>({ initialData, validationSchema }: UseFormProps<T>): {
         return true;
     }
 
-    function handleChange(e: ChangeEvent) {
-        const { name, value } = e.target as
-            HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+    function handleChange(e: ChangeEvent<FormElements>) {
+        const { name, value } = e.target;
         setFormData((prev) => {
             const updated = {
                 ...prev,
@@ -57,8 +60,8 @@ function useForm<T>({ initialData, validationSchema }: UseFormProps<T>): {
     }
 
     function handleSubmit(
-        submitCallback: (data: T) => void
-    ): (e: SubmitEvent) => void {
+        submitCallback: SubmitCallBack<T>
+    ): HandleSubmitReturn {
         return (e: SubmitEvent) => {
             e.preventDefault();
             setTouched((prev) => (!prev ? true : prev));
