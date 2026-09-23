@@ -5,6 +5,7 @@ import {
     FormFieldReturn,
     HandleSubmitReturn,
     SubmitCallBack,
+    UnTouchedError,
     UseFormProps,
     UseFormReturn,
 } from "./types.js";
@@ -34,11 +35,18 @@ function useForm<T, TError extends string = string>({
     function validateData(data: T): boolean {
         const parsed = validationSchema.safeParse(data);
         if (!parsed.success) {
-            const fieldErrors = parsed.error.flatten().fieldErrors;
+            const errors = parsed.error._zod.def.map(
+                (err) =>
+                    ({
+                        path: err.path[0],
+                        message: err.message,
+                    }) as UnTouchedError<T, TError>
+            );
             const mappedErrors: FormErrors<T, TError> = {};
-            (Object.keys(fieldErrors) as (keyof T)[]).forEach((key) => {
-                const message = fieldErrors[key]?.[0];
-                if (message) mappedErrors[key] = message as TError;
+            errors.forEach(({ path, message }) => {
+                if (!mappedErrors[path]) {
+                    mappedErrors[path] = message;
+                }
             });
             setFormErrors({ ...mappedErrors });
             return false;

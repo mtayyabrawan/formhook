@@ -13,6 +13,7 @@ export type FormFieldReturn<T, K extends keyof T> = {
 };
 
 export type FormErrors<T, TError> = Partial<Record<keyof T, TError>>;
+export type UnTouchedError<T, TError> = { path: keyof T; message: TError };
 
 export type UseFormProps<T> = {
     initialData: T;
